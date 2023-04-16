@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <omp.h>
 
 int read_csv(const char *filename, double *data) {
     FILE *file = fopen(filename, "r");
@@ -53,13 +55,15 @@ int main() {
     double data[11];
     int data_length = read_csv(filename, data);
 
-    double alpha = 0.3;
-    double beta = 0.1;
-
+    double alpha = 0.01;
+    double beta = 0.01;
+    double t_start = 0.0, t_taken;
     double result[11 + 3];
 
+    t_start = omp_get_wtime();
     double_exponential_smoothing(data, data_length, alpha, beta, result);
-
+    t_taken = t_start - omp_get_wtime();
+    printf("Time taken : %f \n", t_taken)
     // Output the smoothed values for the first 11 months
     for (int i = 0; i < data_length; i++) {
         printf("Smoothed value for month %d: %.2lf\n", i + 1, result[i]);
