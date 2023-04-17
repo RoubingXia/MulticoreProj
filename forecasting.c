@@ -24,7 +24,7 @@ int read_csv(const char *filename, double *data) {
 
 
 
-void write_helper(char file_name[], const int* alpha_betas, const int* pointers, int len1, int len2, int len3) {
+void write_helper(char file_name[], const int** alpha_betas, const int** pointers, int len1, int len2, int len3) {
     // write an array to a file, len1: length of the Smoothed value for month,
     // len2: total length of each double array, len3: total length of the data array
     FILE *fptr;
@@ -140,6 +140,7 @@ int main(int argc, char *argv[]) {
             int idx = start * 99;// used to fill pointers and alpha_betas
             for (int f_a = start + 1; f_a <= end; ++f_a) {
                 for (int f_b = 1; f_b < range; ++f_b) {
+                    if (idx >= 99 * 99) continue;
                     alpha = base * f_a;
                     beta = base * f_b;
                     double* result = (double*) malloc(sizeof(double) * (11 + 3));
