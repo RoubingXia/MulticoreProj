@@ -107,8 +107,8 @@ int main(int argc, char *argv[]) {
     double t_start = 0.0, t_taken;
 
     int range = 100;
-    int* pointers = (int*) malloc(sizeof(int) * 99 * 99);
-    int* alpha_betas = (int*) malloc(sizeof(int) * 99 * 99);
+    int** pointers = (int*) malloc(sizeof(int) * 99 * 99);
+    int** alpha_betas = (int*) malloc(sizeof(int) * 99 * 99);
 
     t_start = omp_get_wtime();
 
@@ -137,8 +137,8 @@ int main(int argc, char *argv[]) {
             int tid = omp_get_thread_num();
             int start = tid * step;
             int end = (tid == threads_count - 1) ? range - 1 : (tid + 1) * step;
-            int idx = start;// used to fill pointers and alpha_betas
-            for (int f_a = start; f_a <= end; ++f_a) {
+            int idx = start * 99;// used to fill pointers and alpha_betas
+            for (int f_a = start + 1; f_a <= end; ++f_a) {
                 for (int f_b = 1; f_b < range; ++f_b) {
                     alpha = base * f_a;
                     beta = base * f_b;
