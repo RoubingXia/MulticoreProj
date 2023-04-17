@@ -103,6 +103,7 @@ int main(int argc, char *argv[]) {
 
     double alpha = 0.01;
     double beta = 0.01;
+    double base = 0.01;
     double t_start = 0.0, t_taken;
 
     int range = 100;
@@ -114,8 +115,8 @@ int main(int argc, char *argv[]) {
     if (threads_count == 0) {
         for (int f_a = 1; f_a < 100; ++f_a) {
             for (int f_b = 1; f_b < 100; ++f_b) {
-                alpha *= f_a;
-                beta *= f_b;
+                alpha = base * f_a;
+                beta = base * f_b;
                 double* result = (double*) malloc(sizeof(double) * (11 + 3));
                 double* alpha_beta = (double*) malloc(sizeof(double) * 2);
                 alpha_beta[0] = alpha;
@@ -126,6 +127,7 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+    /*
     else {
         int step = range / threads_count;
         #pragma omp parallel num_threads(threads_count)
@@ -142,7 +144,7 @@ int main(int argc, char *argv[]) {
                 }
             }
         }
-    }
+    }*/
 
 
     t_taken =  omp_get_wtime() - t_start;
