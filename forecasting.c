@@ -61,9 +61,15 @@ int main() {
     double result[11 + 3];
 
     t_start = omp_get_wtime();
-    double_exponential_smoothing(data, data_length, alpha, beta, result);
-    t_taken = t_start - omp_get_wtime();
-    printf("Time taken : %f \n", t_taken)
+    for (int f_a = 1; f_a < 100; ++f_a) {
+        for (int f_b = 1; f_b < 100; ++f_b) {
+            alpha *= f_a;
+            beta *= f_b;
+            double_exponential_smoothing(data, data_length, alpha, beta, result);
+        }
+    }
+    t_taken =  omp_get_wtime() - t_start;
+    printf("Time taken : %f \n", t_taken);
     // Output the smoothed values for the first 11 months
     for (int i = 0; i < data_length; i++) {
         printf("Smoothed value for month %d: %.2lf\n", i + 1, result[i]);
