@@ -118,6 +118,8 @@ int main(int argc, char *argv[]) {
                 beta *= f_b;
                 double* result = (double*) malloc(sizeof(double) * (11 + 3));
                 double* alpha_beta = (double*) malloc(sizeof(double) * 2);
+                alpha_beta[0] = alpha;
+                alpha_beta[1] = beta;
                 double_exponential_smoothing(data, data_length, alpha, beta, result);
                 pointers[idx] = result;
                 alpha_betas[idx++] = alpha_beta;
@@ -145,6 +147,7 @@ int main(int argc, char *argv[]) {
 
     t_taken =  omp_get_wtime() - t_start;
     printf("Time taken : %f \n", t_taken);
+    /*
     // Output the smoothed values for the first 11 months
     for (int i = 0; i < data_length; i++) {
         printf("Smoothed value for month %d: %.2lf\n", i + 1, result[i]);
@@ -154,6 +157,7 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < 3; i++) {
         printf("Predicted sales for month %d: %.2lf\n", data_length + 1 + i, result[data_length + i]);
     }
+     */
     write_helper("output", alpha_betas, pointers, 11, 11 + 3, 99 * 99);
     return 0;
 }
