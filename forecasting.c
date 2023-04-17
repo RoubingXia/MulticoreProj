@@ -109,10 +109,11 @@ int main(int argc, char *argv[]) {
     int range = 100;
     int* pointers = (int*) malloc(sizeof(int) * 99 * 99);
     int* alpha_betas = (int*) malloc(sizeof(int) * 99 * 99);
-    int idx = 0;// used to fill pointers and alpha_betas
+
     t_start = omp_get_wtime();
 
     if (threads_count == 0) {
+        int idx = 0;// used to fill pointers and alpha_betas
         for (int f_a = 1; f_a < 100; ++f_a) {
             for (int f_b = 1; f_b < 100; ++f_b) {
                 alpha = base * f_a;
@@ -127,7 +128,7 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-    /*
+
     else {
         int step = range / threads_count;
         #pragma omp parallel num_threads(threads_count)
@@ -136,15 +137,22 @@ int main(int argc, char *argv[]) {
             int tid = omp_get_thread_num();
             int start = tid * step;
             int end = (tid == threads_count - 1) ? range - 1 : (tid + 1) * step;
+            int idx = start;// used to fill pointers and alpha_betas
             for (int f_a = start; f_a <= end; ++f_a) {
                 for (int f_b = 1; f_b < range; ++f_b) {
-                    alpha *= f_a;
-                    beta *= f_b;
+                    alpha = base * f_a;
+                    beta = base * f_b;
+                    double* result = (double*) malloc(sizeof(double) * (11 + 3));
+                    double* alpha_beta = (double*) malloc(sizeof(double) * 2);
+                    alpha_beta[0] = alpha;
+                    alpha_beta[1] = beta;
                     double_exponential_smoothing(data, data_length, alpha, beta, result);
+                    pointers[idx] = result;
+                    alpha_betas[idx++] = alpha_beta;
                 }
             }
         }
-    }*/
+    }
 
 
     t_taken =  omp_get_wtime() - t_start;
