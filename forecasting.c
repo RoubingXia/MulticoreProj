@@ -50,7 +50,14 @@ void double_exponential_smoothing(const double *data, int n, double alpha, doubl
 
 
 
-int main() {
+int main(int argc, char *argv[]) {
+
+    if(argc != 2 ){
+        printf("usage: ./forecasting t N t\n");
+        printf("t: the number of threads \n");
+        exit(1);
+    }
+    int threads_count = atoi(argv[1]);
     const char *filename = "output.csv";
     double data[11];
     int data_length = read_csv(filename, data);
@@ -59,15 +66,38 @@ int main() {
     double beta = 0.01;
     double t_start = 0.0, t_taken;
     double result[11 + 3];
+    int range = 99;
 
     t_start = omp_get_wtime();
-    for (int f_a = 1; f_a < 100; ++f_a) {
-        for (int f_b = 1; f_b < 100; ++f_b) {
-            alpha *= f_a;
-            beta *= f_b;
-            double_exponential_smoothing(data, data_length, alpha, beta, result);
+
+    if (threads_count == 0) {
+        for (int f_a = 1; f_a < 100; ++f_a) {
+            for (int f_b = 1; f_b < 100; ++f_b) {
+                alpha *= f_a;
+                beta *= f_b;
+                double_exponential_smoothing(data, data_length, alpha, beta, result);
+            }
         }
     }
+    else {
+        int step = range / threads_count;
+        #pragma omp parallel num_threads(threads_count)
+        {
+
+            int tid = omp_get_thread_num();
+            int start = tid * step;
+            int end = (tid == threads_count - 1) ? range - 1 : (tid + 1) * step;
+            for (int f_a = start; f_a <= end; ++f_a) {
+                for (int f_b = start; f_b <= end; ++f_b) {
+                    alpha *= f_a;
+                    beta *= f_b;
+                    double_exponential_smoothing(data, data_length, alpha, beta, result);
+                }
+            }
+        }
+    }
+
+
     t_taken =  omp_get_wtime() - t_start;
     printf("Time taken : %f \n", t_taken);
     // Output the smoothed values for the first 11 months
