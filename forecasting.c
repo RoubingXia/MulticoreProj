@@ -36,14 +36,14 @@ void write_helper(char file_name[], const double** alpha_betas, const double** p
     }
     // pointers is an array of double pointers, alpha_betas stores pointers which points to double arrays where alpha and beta are stored. iterate the data
     for (int i = 0; i < len3; ++i) {
-        double data[] = pointers[i];    // get data
-        double info[] = alpha_betas[i]; // get corresponding alpha and beta
-        double alpha = info[0];
-        double beta = info[1];
+        //double data[] = pointers[i];    // get data
+        //double info[] = alpha_betas[i]; // get corresponding alpha and beta
+        double alpha = alpha_betas[0];
+        double beta = alpha_betas[1];
         fprintf(fptr,"Alpha : %f Beta : %f\n",alpha, beta);
         for (int j = 0; j < len2; ++j) {
             int month = j + 1;
-            double line = data[j];
+            double line =  pointers[i][j];
             if (j >= len1) {
                 // Output the forecasted values
                 fprintf(fptr,"\tPredicted sales for month %d: %.2lf\n",month, line);
