@@ -109,42 +109,35 @@ int main(int argc, char *argv[]) {
     int range = 100;
     double data_set[(range - 1) * (range - 1)][11 + 3]; // output data
     double alpha_betas[(range - 1) * (range - 1)][2]; // alpha beta
-
+    int idx = 0;
+    for (int i = 1; i < range; ++i) {
+        for (int j = 1; j < range; ++j) {
+            alpha_betas[idx][0] = base * i;
+            alpha_betas[idx++][1] = base * j;
+        }
+    }
+    int len = (range - 1) * (range - 1); // length of alpha_betas
     t_start = omp_get_wtime();
 
     if (threads_count == 0) {
         int idx = 0;// used to fill pointers and alpha_betas
-        for (int f_a = 1; f_a < 100; ++f_a) {
-            for (int f_b = 1; f_b < 100; ++f_b) {
-                alpha = base * f_a;
-                beta = base * f_b;
-                alpha_betas[idx][0] = alpha;
-                alpha_betas[idx][1] = beta;
-                double_exponential_smoothing(data, data_length, alpha, beta, data_set[idx]);
-                ++idx;
-            }
+        for (int i = 0 ; i < len; ++i) {
+            alpha = alpha_betas[i][0];
+            beta = alpha_betas[i][1];
+            double_exponential_smoothing(data, data_length, alpha, beta, data_set[i]);
         }
     }
-
     else {
-        int step = range / threads_count;
+        int step = len / threads_count;
         #pragma omp parallel num_threads(threads_count)
         {
-
             int tid = omp_get_thread_num();
             int start = tid * step;
-            int end = (tid == threads_count - 1) ? range - 1 : (tid + 1) * step;
-            int idx = start * 99;// used to fill pointers and alpha_betas
-            for (int f_a = start + 1; f_a <= end; ++f_a) {
-                for (int f_b = 1; f_b < range; ++f_b) {
-                    if (idx >= 99 * 99) continue;
-                    alpha = base * f_a;
-                    beta = base * f_b;
-                    alpha_betas[idx][0] = alpha;
-                    alpha_betas[idx][1] = beta;
-                    double_exponential_smoothing(data, data_length, alpha, beta, data_set[idx]);
-                    ++idx;
-                }
+            int end = (tid == threads_count - 1) ? len : (tid + 1) * step;
+            for (int i = start ; i < end; ++i) {
+                alpha = alpha_betas[i][0];
+                beta = alpha_betas[i][1];
+                double_exponential_smoothing(data, data_length, alpha, beta, data_set[i]);
             }
         }
     }
