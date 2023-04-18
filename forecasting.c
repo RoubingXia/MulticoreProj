@@ -24,7 +24,7 @@ int read_csv(const char *filename, double *data) {
 
 
 
-void write_helper(char file_name[], const double* alpha_betas, const double* pointers, int len1, int len2, int len3) {
+void write_helper(char file_name[], const double** alpha_betas, const double** pointers, int len1, int len2, int len3) {
     // write an array to a file, len1: length of the Smoothed value for month,
     // len2: total length of each double array, len3: total length of the data array
     FILE *fptr;
