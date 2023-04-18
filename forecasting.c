@@ -157,6 +157,6 @@ int main(int argc, char *argv[]) {
         printf("Predicted sales for month %d: %.2lf\n", data_length + 1 + i, result[data_length + i]);
     }
      */
-    write_helper("output", alpha_betas, data_set, 11, 11 + 3, 99 * 99);
+    write_helper("output", alpha_betas, data_set);
     return 0;
 }
