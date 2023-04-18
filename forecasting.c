@@ -24,7 +24,7 @@ int read_csv(const char *filename, double *data) {
 
 
 
-void write_helper(char file_name[], const int** alpha_betas, const int** pointers, int len1, int len2, int len3) {
+void write_helper(char file_name[], const double* alpha_betas, const double* pointers, int len1, int len2, int len3) {
     // write an array to a file, len1: length of the Smoothed value for month,
     // len2: total length of each double array, len3: total length of the data array
     FILE *fptr;
@@ -107,8 +107,8 @@ int main(int argc, char *argv[]) {
     double t_start = 0.0, t_taken;
 
     int range = 100;
-    int** pointers = (int*) malloc(sizeof(int) * 99 * 99);
-    int** alpha_betas = (int*) malloc(sizeof(int) * 99 * 99);
+    double data_set[(range - 1) * (range - 1)][11 + 3]; // output data
+    double alpha_betas[(range - 1) * (range - 1)][2]; // alpha beta
 
     t_start = omp_get_wtime();
 
@@ -118,13 +118,10 @@ int main(int argc, char *argv[]) {
             for (int f_b = 1; f_b < 100; ++f_b) {
                 alpha = base * f_a;
                 beta = base * f_b;
-                double* result = (double*) malloc(sizeof(double) * (11 + 3));
-                double* alpha_beta = (double*) malloc(sizeof(double) * 2);
-                alpha_beta[0] = alpha;
-                alpha_beta[1] = beta;
-                double_exponential_smoothing(data, data_length, alpha, beta, result);
-                pointers[idx] = result;
-                alpha_betas[idx++] = alpha_beta;
+                alpha_betas[idx][0] = alpha;
+                alpha_betas[idx][1] = beta;
+                double_exponential_smoothing(data, data_length, alpha, beta, data_set[idx]);
+                ++idx;
             }
         }
     }
@@ -143,13 +140,10 @@ int main(int argc, char *argv[]) {
                     if (idx >= 99 * 99) continue;
                     alpha = base * f_a;
                     beta = base * f_b;
-                    double* result = (double*) malloc(sizeof(double) * (11 + 3));
-                    double* alpha_beta = (double*) malloc(sizeof(double) * 2);
-                    alpha_beta[0] = alpha;
-                    alpha_beta[1] = beta;
-                    double_exponential_smoothing(data, data_length, alpha, beta, result);
-                    pointers[idx] = result;
-                    alpha_betas[idx++] = alpha_beta;
+                    alpha_betas[idx][0] = alpha;
+                    alpha_betas[idx][1] = beta;
+                    double_exponential_smoothing(data, data_length, alpha, beta, data_set[idx]);
+                    ++idx;
                 }
             }
         }
