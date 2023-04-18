@@ -3,6 +3,7 @@
 #include <time.h>
 #include <omp.h>
 
+
 int read_csv(const char *filename, double *data) {
     FILE *file = fopen(filename, "r");
     if (!file) {
@@ -24,7 +25,7 @@ int read_csv(const char *filename, double *data) {
 
 
 
-void write_helper(char file_name[], const double** alpha_betas, const double** pointers, int len1, int len2, int len3) {
+void write_helper(char file_name[], double alpha_betas[9801][2], double pointers[9801][14]) {
     // write an array to a file, len1: length of the Smoothed value for month,
     // len2: total length of each double array, len3: total length of the data array
     FILE *fptr;
@@ -35,16 +36,16 @@ void write_helper(char file_name[], const double** alpha_betas, const double** p
         exit(1);
     }
     // pointers is an array of double pointers, alpha_betas stores pointers which points to double arrays where alpha and beta are stored. iterate the data
-    for (int i = 0; i < len3; ++i) {
+    for (int i = 0; i < 9801; ++i) {
         //double data[] = pointers[i];    // get data
         //double info[] = alpha_betas[i]; // get corresponding alpha and beta
         double alpha = alpha_betas[0];
         double beta = alpha_betas[1];
         fprintf(fptr,"Alpha : %f Beta : %f\n",alpha, beta);
-        for (int j = 0; j < len2; ++j) {
+        for (int j = 0; j < 14; ++j) {
             int month = j + 1;
             double line =  pointers[i][j];
-            if (j >= len1) {
+            if (j >= 12) {
                 // Output the forecasted values
                 fprintf(fptr,"\tPredicted sales for month %d: %.2lf\n",month, line);
             }
