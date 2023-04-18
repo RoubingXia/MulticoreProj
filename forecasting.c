@@ -39,8 +39,8 @@ void write_helper(char file_name[], double alpha_betas[9801][2], double pointers
     for (int i = 0; i < 9801; ++i) {
         //double data[] = pointers[i];    // get data
         //double info[] = alpha_betas[i]; // get corresponding alpha and beta
-        double alpha = alpha_betas[0];
-        double beta = alpha_betas[1];
+        double alpha = alpha_betas[i][0];
+        double beta = alpha_betas[i][1];
         fprintf(fptr,"Alpha : %f Beta : %f\n",alpha, beta);
         for (int j = 0; j < 14; ++j) {
             int month = j + 1;
