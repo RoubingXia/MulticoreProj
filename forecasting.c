@@ -36,8 +36,8 @@ void write_helper(char file_name[], const double* alpha_betas, const double* poi
     }
     // pointers is an array of double pointers, alpha_betas stores pointers which points to double arrays where alpha and beta are stored. iterate the data
     for (int i = 0; i < len3; ++i) {
-        double* data = pointers[i];    // get data
-        double* info = alpha_betas[i]; // get corresponding alpha and beta
+        double data[] = pointers[i];    // get data
+        double info[] = alpha_betas[i]; // get corresponding alpha and beta
         double alpha = info[0];
         double beta = info[1];
         fprintf(fptr,"Alpha : %f Beta : %f\n",alpha, beta);
@@ -163,6 +163,6 @@ int main(int argc, char *argv[]) {
         printf("Predicted sales for month %d: %.2lf\n", data_length + 1 + i, result[data_length + i]);
     }
      */
-    write_helper("output", alpha_betas, pointers, 11, 11 + 3, 99 * 99);
+    write_helper("output", alpha_betas, data_set, 11, 11 + 3, 99 * 99);
     return 0;
 }
