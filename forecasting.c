@@ -80,7 +80,7 @@ void write_helper(char file_name[], double alpha_betas[9801][2], double pointers
         for (int j = 0; j < 14; ++j) {
             int month = j + 1;
             double line =  pointers[i][j];
-            if (j >= 12) {
+            if (j >= 11) {
                 // Output the forecasted values
                 fprintf(fptr,"\tPredicted sales for month %d: %.2lf\n",month, line);
             }
