@@ -23,6 +23,41 @@ int read_csv(const char *filename, double *data) {
     return i;
 }
 
+void write_helper1(char file_name[], double alpha_betas[9801][2], double pointers[9801][14], int best_alpha_beta_idx) {
+    // write an array to a file, len1: length of the Smoothed value for month,
+    // len2: total length of each double array, len3: total length of the data array
+    FILE *fptr;
+    fptr = fopen(file_name,"w");
+    if(fptr == NULL)
+    {
+        printf("Error!");
+        exit(1);
+    }
+    // pointers is an array of double pointers, alpha_betas stores pointers which points to double arrays where alpha and beta are stored. iterate the data
+
+        //double data[] = pointers[i];    // get data
+        //double info[] = alpha_betas[i]; // get corresponding alpha and beta
+        double alpha = alpha_betas[best_alpha_beta_idx][0];
+        double beta = alpha_betas[best_alpha_beta_idx][1];
+        fprintf(fptr,"Alpha : %f Beta : %f\n",alpha, beta);
+        for (int j = 0; j < 14; ++j) {
+            int month = j + 1;
+            double line =  pointers[best_alpha_beta_idx][j];
+            if (j >= 12) {
+                // Output the forecasted values
+                fprintf(fptr,"\tPredicted sales for month %d: %.2lf\n",month, line);
+            }
+            else {
+                // Output the smoothed values for the first 11 months
+                fprintf(fptr,"\tSmoothed value for month %d: %.2lf\n",month , line);
+            }
+
+        }
+
+
+
+    fclose(fptr);
+}
 
 
 void write_helper(char file_name[], double alpha_betas[9801][2], double pointers[9801][14]) {
@@ -183,6 +218,7 @@ double result[14];
     }
      */
     write_helper("output", alpha_betas, data_set);
+    write_helper("optimal_output", alpha_betas, data_set, best_alpha_beta_idx);
     printf("best alpha : %.2lf beta : %.2lf\n", alpha_betas[best_alpha_beta_idx][0], alpha_betas[best_alpha_beta_idx][1]);
     return 0;
 }
