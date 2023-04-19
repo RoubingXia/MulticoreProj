@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
     double data[11];
     int data_length = read_csv(filename, data);
     int best_alpha_beta_idx = 0;
-    double MAE = DBL_MAX;
+    double MAE = 100000.0;
     double alpha = 0.01;
     double beta = 0.01;
     double base = 0.01;
@@ -153,6 +153,15 @@ int main(int argc, char *argv[]) {
                 alpha = alpha_betas[i][0];
                 beta = alpha_betas[i][1];
                 double_exponential_smoothing(data, data_length, alpha, beta, data_set[i]);
+                double mean = getMean(data, data_set[i]);
+                #pragma omp critical
+                {
+                    if (mean < MAE) {
+                        MAE = mean;
+                        best_alpha_beta_idx = i;
+                    }
+                }
+
             }
         }
     }
