@@ -61,6 +61,13 @@ void write_helper(char file_name[], double alpha_betas[9801][2], double pointers
     fclose(fptr);
 }
 
+double getMean(double* source_data, double* smooth_data){
+    double mean = 0.0;
+    for (int i = 0; i < 10; ++i) {
+        mean += abs(source_data[i] - smooth_data[i]);
+    }
+    return mean / 10;
+}
 
 void double_exponential_smoothing(const double *data, int n, double alpha, double beta, double *result) {
     double lt[n];
@@ -101,7 +108,8 @@ int main(int argc, char *argv[]) {
     const char *filename = "output.csv";
     double data[11];
     int data_length = read_csv(filename, data);
-
+    int best_alpha_beta_idx = 0;
+    double MAE = DBL_MAX;
     double alpha = 0.01;
     double beta = 0.01;
     double base = 0.01;
@@ -126,6 +134,12 @@ int main(int argc, char *argv[]) {
             alpha = alpha_betas[i][0];
             beta = alpha_betas[i][1];
             double_exponential_smoothing(data, data_length, alpha, beta, data_set[i]);
+            // get current mean
+            double mean = getMean(data, data_set[i]);
+            if (mean < MAE) {
+                MAE = mean;
+                best_alpha_beta_idx = i;
+            }
         }
     }
     else {
@@ -147,6 +161,8 @@ int main(int argc, char *argv[]) {
     t_taken =  omp_get_wtime() - t_start;
     printf("Time taken : %f \n", t_taken);
     /*
+double result[14];
+    double_exponential_smoothing(data, data_length, 0.01, 0.03, result);
     // Output the smoothed values for the first 11 months
     for (int i = 0; i < data_length; i++) {
         printf("Smoothed value for month %d: %.2lf\n", i + 1, result[i]);
@@ -158,5 +174,6 @@ int main(int argc, char *argv[]) {
     }
      */
     write_helper("output", alpha_betas, data_set);
+    printf("best alpha : %.2lf beta : %.2lf\n", alpha_betas[best_alpha_beta_idx][0], alpha_betas[best_alpha_beta_idx][1]);
     return 0;
 }
