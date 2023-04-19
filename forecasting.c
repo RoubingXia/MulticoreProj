@@ -218,7 +218,7 @@ double result[14];
     }
      */
     write_helper("output", alpha_betas, data_set);
-    write_helper("optimal_output", alpha_betas, data_set, best_alpha_beta_idx);
+    write_helper1("optimal_output", alpha_betas, data_set, best_alpha_beta_idx);
     printf("best alpha : %.2lf beta : %.2lf\n", alpha_betas[best_alpha_beta_idx][0], alpha_betas[best_alpha_beta_idx][1]);
     return 0;
 }
